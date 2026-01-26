@@ -101,9 +101,22 @@ export class Scanner {
     const timeStr = result.responseTime ? ` (${result.responseTime}ms)` : '';
 
     if (result.status !== 'CLOSED' || this.options.verbose) {
-      console.log(
-        `${color}[${result.status.padEnd(10)}]${reset} ${result.ip}:${result.port} - ${result.details}${timeStr}`
-      );
+      // Special alert for VULNERABLE instances
+      if (result.status === 'VULNERABLE') {
+        console.log('');
+        console.log('\x1b[41m\x1b[97m                                                    \x1b[0m');
+        console.log(`\x1b[41m\x1b[97m ⚠️  VULNERABLE INSTANCE FOUND!                     \x1b[0m`);
+        console.log('\x1b[41m\x1b[97m                                                    \x1b[0m');
+        console.log(
+          `${color}[${result.status.padEnd(10)}]${reset} ${result.ip}:${result.port} - ${result.details}${timeStr}`
+        );
+        console.log('\x1b[33m→ No authentication required - immediate action needed!\x1b[0m');
+        console.log('');
+      } else {
+        console.log(
+          `${color}[${result.status.padEnd(10)}]${reset} ${result.ip}:${result.port} - ${result.details}${timeStr}`
+        );
+      }
     }
   }
 

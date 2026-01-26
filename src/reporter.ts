@@ -85,9 +85,35 @@ export class Reporter {
     console.log('='.repeat(50) + '\n');
 
     if (summary.vulnerable > 0) {
+      console.log('\x1b[41m\x1b[97m                                                    \x1b[0m');
       console.log(
-        `\x1b[31m⚠️  WARNING: Found ${summary.vulnerable} vulnerable host(s) with no authentication!\x1b[0m\n`
+        `\x1b[41m\x1b[97m ⚠️  CRITICAL: ${summary.vulnerable} VULNERABLE INSTANCE(S) FOUND!      \x1b[0m`
       );
+      console.log('\x1b[41m\x1b[97m                                                    \x1b[0m');
+      console.log('');
+      console.log('\x1b[31mImmediate action required:\x1b[0m');
+      console.log('  1. Review vulnerable instances in the report');
+      console.log('  2. Enable authentication on ClawdBot Gateway');
+      console.log('  3. Restrict network access if possible');
+      console.log('  4. Check for unauthorized access in logs');
+      console.log('');
+      console.log('\x1b[33mSee: https://clawd.bot for security configuration\x1b[0m\n');
+    }
+  }
+
+  static printVulnerableList(results: ScanResult[]): void {
+    const vulnerable = results.filter(r => r.status === 'VULNERABLE');
+
+    if (vulnerable.length > 0) {
+      console.log('\n\x1b[31m' + '='.repeat(50));
+      console.log(`VULNERABLE INSTANCES (${vulnerable.length})`);
+      console.log('='.repeat(50) + '\x1b[0m');
+
+      vulnerable.forEach(result => {
+        console.log(`\x1b[31m• ${result.ip}:${result.port}\x1b[0m - ${result.details}`);
+      });
+
+      console.log('\x1b[31m' + '='.repeat(50) + '\x1b[0m\n');
     }
   }
 

@@ -1,0 +1,157 @@
+version: '3'
+
+vars:
+  PACKAGE_NAME: lobster-hunter
+  NODE_VERSION: 20
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies
+    cmds:
+      - npm install
+
+  build:
+    desc: Build TypeScript project
+    cmds:
+      - npm run build
+
+  dev:
+    desc: Run in development mode
+    cmds:
+      - npm run dev
+
+  watch:
+    desc: Watch mode - rebuild on changes
+    cmds:
+      - npm run watch
+
+  lint:
+    desc: Run ESLint
+    cmds:
+      - npm run lint
+
+  lint:fix:
+    desc: Run ESLint with auto-fix
+    cmds:
+      - npm run lint:fix
+
+  format:
+    desc: Format code with Prettier
+    cmds:
+      - npm run format
+
+  format:check:
+    desc: Check code formatting
+    cmds:
+      - npm run format:check
+
+  typecheck:
+    desc: Run TypeScript type checking
+    cmds:
+      - npm run typecheck
+
+  test:
+    desc: Run all checks (typecheck, lint, format)
+    cmds:
+      - npm test
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf dist
+      - rm -rf node_modules
+
+  clean:results:
+    desc: Clean scan results
+    cmds:
+      - rm -rf results/*.txt
+      - rm -rf results/*.json
+
+  link:
+    desc: Create global npm link
+    deps: [build]
+    cmds:
+      - npm link
+
+  unlink:
+    desc: Remove global npm link
+    cmds:
+      - npm unlink -g {{.PACKAGE_NAME}}
+
+  scan:
+    desc: Run a test scan on localhost
+    deps: [build]
+    cmds:
+      - node dist/index.js 127.0.0.1 -v
+
+  scan:local:
+    desc: Scan local network (192.168.1.0/24)
+    deps: [build]
+    cmds:
+      - node dist/index.js 192.168.1.0/24
+
+  release:patch:
+    desc: Create patch release (1.0.0 -> 1.0.1)
+    deps: [test, build]
+    cmds:
+      - npm version patch
+      - echo 'Now run - git push && git push --tags'
+
+  release:minor:
+    desc: Create minor release (1.0.0 -> 1.1.0)
+    deps: [test, build]
+    cmds:
+      - npm version minor
+      - echo 'Now run - git push && git push --tags'
+
+  release:major:
+    desc: Create major release (1.0.0 -> 2.0.0)
+    deps: [test, build]
+    cmds:
+      - npm version major
+      - echo 'Now run - git push && git push --tags'
+
+  ci:
+    desc: Run CI checks (like GitHub Actions)
+    cmds:
+      - task: typecheck
+      - task: lint
+      - task: format:check
+      - task: build
+
+  publish:check:
+    desc: Check what will be published to NPM
+    cmds:
+      - npm pack --dry-run
+
+  git:status:
+    desc: Show git status
+    cmds:
+      - git status
+
+  git:commit:
+    desc: Commit all changes (interactive)
+    cmds:
+      - git add .
+      - git status
+      - echo 'Ready to commit. Run - git commit'
+
+  help:
+    desc: Show help information
+    cmds:
+      - echo 'lobster-hunter - Network scanner for insecure ClawdBot installations'
+      - echo ''
+      - echo 'Common workflows'
+      - echo '  task install      - Install dependencies'
+      - echo '  task build        - Build the project'
+      - echo '  task test         - Run all checks'
+      - echo '  task scan         - Test scan on localhost'
+      - echo '  task release:patch - Create a patch release'
+      - echo ''
+      - echo 'Full task list'
+      - task --list
