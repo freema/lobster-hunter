@@ -48,8 +48,13 @@ lobster-hunter scans IP addresses and ranges to identify ClawdBot Gateway instan
 # Install globally from NPM
 npm install -g lobster-hunter
 
-# Or use with npx
+# Run the CLI
+lobster-hunter 192.168.1.0/24
+
+# Or use with npx (no installation required)
 npx lobster-hunter 192.168.1.0/24
+npx lobster-hunter 127.0.0.1 -v
+npx lobster-hunter -f targets.txt -o results.txt
 ```
 
 ### For Development
@@ -102,6 +107,8 @@ task link        # Create global npm link
 ```bash
 # Scan a single IP
 lobster-hunter 192.168.1.100
+# or with npx
+npx lobster-hunter 192.168.1.100
 
 # Scan a CIDR range (256 addresses)
 lobster-hunter 10.0.0.0/24
@@ -117,6 +124,9 @@ lobster-hunter -f targets.txt -p 18789 -t 5 -c 100 -o my-results.txt
 
 # Enable verbose output and JSON export
 lobster-hunter 10.0.0.0/24 -v --json
+
+# Quick scan with npx (no installation)
+npx lobster-hunter 127.0.0.1 -v
 ```
 
 **Note:** Results are automatically saved to the `results/` directory.

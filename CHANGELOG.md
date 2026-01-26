@@ -2,6 +2,15 @@
 
 All notable changes to lobster-hunter will be documented in this file.
 
+## [1.0.1] - 2026-01-26
+
+### Changed
+- Enhanced README with npx usage examples
+- Improved documentation for users who don't want to install globally
+
+### Fixed
+- GitHub Actions release workflow now triggers on tags without 'v' prefix (1.0.1 instead of v1.0.1)
+
 ## [1.0.0] - 2026-01-26
 
 ### Added
