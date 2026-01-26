@@ -1,6 +1,6 @@
 {
   "name": "lobster-hunter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Security scanner to identify ClawdBot Gateway instances lacking authentication (https://clawd.bot)",
   "bin": {
     "lobster-hunter": "./dist/index.js"
