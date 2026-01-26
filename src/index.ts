@@ -100,6 +100,7 @@ async function runScan(target: string | undefined, cliOptions: CliOptions): Prom
 
   const { results, summary } = await scanner.scanTargets(targets);
 
+  Reporter.printVulnerableList(results);
   Reporter.printSummary(summary);
 
   await Reporter.saveTxtReport(results, summary, outputFile);
@@ -159,21 +160,19 @@ function checkPublicIPWarning(targets: string[]): void {
   const publicIPs = targets.filter(ip => !isPrivateIP(ip));
 
   if (publicIPs.length > 0) {
-    console.log('\n\x1b[33m⚠️  WARNING: PUBLIC IP ADDRESSES DETECTED!\x1b[0m');
-    console.log('\x1b[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m');
-    console.log('You are about to scan PUBLIC internet addresses.');
-    console.log('This will send REAL network requests to external systems.');
-    console.log('');
-    console.log('\x1b[31mUnauthorized scanning may be ILLEGAL!\x1b[0m');
-    console.log('');
-    console.log(`Public IPs in scan: ${publicIPs.length} out of ${targets.length} total`);
+    console.log('\n\x1b[36mℹ️  Scanning public IP addresses\x1b[0m');
+    console.log('\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m');
+    console.log(`Target: ${publicIPs.length} public IP(s) out of ${targets.length} total`);
     console.log('Sample:', publicIPs.slice(0, 5).join(', '));
     console.log('');
-    console.log('Only proceed if you have:');
-    console.log('  ✓ Written authorization to scan these systems');
-    console.log('  ✓ Ownership of these IP addresses');
-    console.log('  ✓ Bug bounty permission for these ranges');
-    console.log('\x1b[33m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n');
+    console.log('This tool scans for insecure ClawdBot instances that lack');
+    console.log('proper authentication (https://clawd.bot).');
+    console.log('');
+    console.log('\x1b[33mBest practices:\x1b[0m');
+    console.log('  • Ensure you have authorization to scan target systems');
+    console.log('  • Use for security audits of your own infrastructure');
+    console.log('  • Respect rate limits and network policies');
+    console.log('\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n');
   }
 }
 

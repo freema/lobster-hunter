@@ -16,7 +16,7 @@ export async function checkWebSocketAuth(
       if (!resolved) {
         resolved = true;
         resolve({
-          status: 'OPEN',
+          status: 'CLOSED',
           details: 'Connection timeout',
           responseTime: Date.now() - startTime,
         });
@@ -67,6 +67,18 @@ export async function checkWebSocketAuth(
             resolve({
               status: 'CLOSED',
               details: 'Connection refused',
+              responseTime: Date.now() - startTime,
+            });
+          } else if (
+            errorMessage.includes('etimedout') ||
+            errorMessage.includes('timeout') ||
+            errorMessage.includes('ehostunreach') ||
+            errorMessage.includes('enetunreach') ||
+            errorMessage.includes('enotfound')
+          ) {
+            resolve({
+              status: 'CLOSED',
+              details: 'Host unreachable or timeout',
               responseTime: Date.now() - startTime,
             });
           } else {

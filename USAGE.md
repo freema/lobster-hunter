@@ -1,8 +1,8 @@
 # lobster-hunter Usage Guide
 
-## ⚠️ Read This First
+## Purpose
 
-**This tool sends REAL network requests!** Only scan systems you own or have explicit permission to test. Unauthorized scanning may be illegal in your jurisdiction.
+This tool identifies [ClawdBot](https://clawd.bot) Gateway instances that lack proper authentication. Use it to audit your own infrastructure and ensure ClawdBot deployments are properly secured.
 
 ## Quick Start
 
@@ -304,39 +304,42 @@ lobster-hunter 192.168.1.0/24 -t 10 -v
 
 ### Before Scanning
 
-1. **Get written authorization** - email, contract, or bug bounty rules
-2. **Verify IP ranges** - double-check you're scanning the right targets
+1. **Verify authorization** - Ensure you have permission to scan target systems
+2. **Verify IP ranges** - Double-check you're scanning the correct targets
 3. **Test on localhost first** - `lobster-hunter 127.0.0.1` to verify setup
+4. **Review scope** - Confirm scan scope with stakeholders
 
 ### During Scanning
 
-4. **Use appropriate concurrency** - don't DoS the network
-5. **Monitor for issues** - be ready to stop if problems occur
-6. **Scan during maintenance windows** when possible for production systems
+5. **Use appropriate concurrency** - Start with lower values (`-c 10-50`)
+6. **Monitor progress** - Watch for unexpected results or errors
+7. **Respect rate limits** - Adjust concurrency if needed
+8. **Scan during maintenance windows** - Minimize impact on production
 
 ### After Scanning
 
-7. **Store results securely** - `results/` folder contains sensitive data
-8. **Don't commit scan results** - already in `.gitignore`
-9. **Report findings properly** - follow responsible disclosure
-10. **Delete old scans** - `rm -rf results/*` when no longer needed
+9. **Review results** - Analyze findings in `results/` directory
+10. **Report vulnerabilities** - Follow responsible disclosure practices
+11. **Document findings** - Keep records of discovered issues
+12. **Secure scan data** - Results contain sensitive network information
+13. **Don't commit results** - Already in `.gitignore`
+14. **Clean up old scans** - `task clean:results` when no longer needed
 
-### What NOT to Scan
+### Recommended Use Cases
 
-❌ Public internet ranges without authorization (e.g., `185.8.164.0/24`)
-❌ Cloud provider networks (AWS, Azure, GCP, etc.)
-❌ Government or educational networks
-❌ Your ISP's infrastructure
-❌ Anything you don't own or have written permission to test
+**✅ Primary use cases:**
+- Auditing your own ClawdBot deployments
+- Verifying authentication is enabled
+- Infrastructure security assessments
+- Compliance validation
+- Pre-deployment security checks
+- Localhost/development testing
 
-### What's SAFE to Scan
-
-✅ `127.0.0.1` or `127.0.0.0/8` - Your localhost
-✅ Your own VPS/dedicated servers
-✅ Your home network (if you're the owner)
-✅ Company network with IT department approval
-✅ Bug bounty program targets within scope
-✅ CTF competition infrastructure
+**⚠️ Requires proper authorization:**
+- Corporate networks (IT approval required)
+- Cloud infrastructure (check ToS)
+- Client systems (written agreement)
+- Bug bounty programs (within defined scope)
 
 ## Integration with Other Tools
 

@@ -1,21 +1,34 @@
 # lobster-hunter 🦞
 
-A TypeScript CLI tool for scanning network ranges to detect insecure ClawdBot Gateway installations that lack proper authentication.
+A TypeScript CLI tool for scanning network ranges to detect insecure [ClawdBot](https://clawd.bot) Gateway installations that lack proper authentication.
 
-## ⚠️ LEGAL WARNING
+## Purpose
 
-**This tool sends REAL network requests to the specified IP addresses!**
+This tool helps identify ClawdBot Gateway instances that are **publicly accessible without authentication**, which is a security risk. It performs:
 
-- ❌ **DO NOT** scan networks you don't own or have explicit permission to test
-- ❌ **DO NOT** scan public internet ranges without authorization
-- ❌ Unauthorized network scanning may be **ILLEGAL** in your jurisdiction
-- ✅ **ONLY USE** on your own systems, with written authorization, or in authorized security testing
+1. **WebSocket Connection Test** - Attempts to connect without credentials
+2. **Authentication Check** - Verifies if the instance requires auth (401/403)
+3. **Classification** - Reports instances as VULNERABLE, SECURED, OPEN, or CLOSED
 
-**You are responsible for ensuring you have proper authorization before using this tool.**
+**Primary Use Cases:**
+- Security audits of your own ClawdBot deployments
+- Infrastructure security assessments
+- Identifying misconfigured instances before attackers do
+- Compliance and security posture verification
+
+## Responsible Use
+
+This tool performs active network scanning:
+- Ensure you have authorization to scan target systems
+- Use for security audits of infrastructure you own or manage
+- Respect network policies and rate limits
+- Report findings responsibly to system owners
+
+For ClawdBot security documentation, see: https://clawd.bot
 
 ## Overview
 
-lobster-hunter scans IP addresses and ranges to identify ClawdBot Gateway instances that accept WebSocket connections without requiring authentication. This tool is designed for authorized security assessments and penetration testing.
+lobster-hunter scans IP addresses and ranges to identify ClawdBot Gateway instances that accept WebSocket connections without requiring authentication.
 
 ## Features
 
@@ -29,9 +42,57 @@ lobster-hunter scans IP addresses and ranges to identify ClawdBot Gateway instan
 
 ## Installation
 
+### For Users
+
 ```bash
+# Install globally from NPM
+npm install -g lobster-hunter
+
+# Or use with npx
+npx lobster-hunter 192.168.1.0/24
+```
+
+### For Development
+
+```bash
+# Clone repository
+git clone https://github.com/freema/lobster-hunter.git
+cd lobster-hunter
+
+# Install dependencies
 npm install
+
+# Build
 npm run build
+
+# Create global link
+npm link
+```
+
+### Using Task (Recommended for Development)
+
+This project uses [Task](https://taskfile.dev) for common operations:
+
+```bash
+# Install Task (if not already installed)
+# macOS
+brew install go-task
+
+# Linux
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+# Windows
+choco install go-task
+
+# Show available tasks
+task --list
+
+# Common tasks
+task install     # Install dependencies
+task build       # Build project
+task test        # Run all checks
+task scan        # Test scan on localhost
+task link        # Create global npm link
 ```
 
 ## Usage
@@ -155,62 +216,91 @@ Results are saved to `results/clawdbot-scan-[timestamp].txt` (and optionally `.j
 
 ## Development
 
+### Using Task (Recommended)
+
 ```bash
-# Install dependencies
-npm install
-
-# Run in development mode
-npm run dev -- 127.0.0.1
-
-# Build
-npm run build
-
-# Run built version
-npm start -- 127.0.0.1
+task install          # Install dependencies
+task build            # Build TypeScript
+task dev              # Run in development mode
+task test             # Run all checks (typecheck, lint, format)
+task lint             # Run ESLint
+task format           # Format code with Prettier
+task scan             # Test scan on localhost
 ```
 
-## Security & Legal Considerations
+### Using NPM Scripts
 
-### ⚠️ This Tool Sends Real Network Traffic
+```bash
+npm install           # Install dependencies
+npm run dev -- 127.0.0.1  # Run in development mode
+npm run build         # Build TypeScript
+npm start -- 127.0.0.1    # Run built version
+npm test              # Run all checks
+npm run lint          # ESLint
+npm run format        # Prettier
+```
 
-When you run `lobster-hunter 185.8.164.0/24`, you are:
-- Connecting to **256 real servers** on the internet
-- Sending TCP and WebSocket requests to each
-- Potentially triggering intrusion detection systems
-- Creating network logs on remote systems
+### Release Process
 
-### Safe Usage Scenarios
+```bash
+# Using Task
+task test             # Ensure all checks pass
+task release:patch    # Create patch release (1.0.0 -> 1.0.1)
+git push && git push --tags  # Push to GitHub
 
-✅ **Safe to scan:**
-- `127.0.0.1` - Your own computer (localhost)
-- Your own servers and infrastructure
-- Networks where you are the administrator
-- Penetration testing with **written authorization**
-- Bug bounty programs within defined scope
-- CTF challenges and training labs
+# Using NPM
+npm test              # Ensure all checks pass
+npm version patch     # Bump version
+git push && git push --tags  # Trigger release
+```
 
-❌ **NEVER scan:**
-- Public IP ranges without authorization
-- Your employer's network without permission
-- ISP networks or cloud providers
-- Government or military networks
-- Any system you don't own or have explicit written permission to test
+GitHub Actions will automatically:
+- Run tests
+- Build project
+- Publish to NPM
+- Create GitHub Release
+- Send Pushover notification
 
-### Legal Framework
+## Usage Notes
 
-- **Czech Republic:** Unauthorized access to computer systems (§230 trestního zákoníku)
-- **EU:** NIS2 Directive, GDPR considerations
-- **USA:** Computer Fraud and Abuse Act (CFAA)
-- **Worldwide:** Most countries have cybercrime laws prohibiting unauthorized network scanning
+### What This Tool Does
+
+lobster-hunter performs active network scanning by:
+- Attempting WebSocket connections to specified IP addresses
+- Testing if ClawdBot Gateway requires authentication
+- Identifying potentially insecure instances
+
+### Recommended Scenarios
+
+**✅ Good use cases:**
+- Security audits of your own ClawdBot infrastructure
+- Verifying proper authentication on your deployments
+- Infrastructure compliance checks
+- Pre-deployment security validation
+- Internal security assessments
+- Localhost testing (`127.0.0.1`)
+
+**⚠️ Ensure authorization for:**
+- Corporate network scans (get IT approval)
+- Cloud infrastructure (verify ToS compliance)
+- Third-party systems (written permission required)
+- Bug bounty programs (follow scope rules)
 
 ### Best Practices
 
-1. **Always get written permission** before scanning
-2. **Document your authorization** - keep records
-3. **Limit scan scope** to authorized ranges only
-4. **Use appropriate timing** - avoid business hours if possible
-5. **Monitor your scans** - be ready to stop if issues arise
-6. **Report findings properly** - follow responsible disclosure
+1. **Start small** - Test on localhost first
+2. **Verify scope** - Double-check IP ranges before scanning
+3. **Rate limiting** - Use appropriate concurrency settings
+4. **Documentation** - Keep records of authorization
+5. **Responsible disclosure** - Report vulnerabilities properly
+6. **Monitor scans** - Watch for unexpected results
+
+### Performance Considerations
+
+- Use lower concurrency (`-c 10`) to avoid overwhelming networks
+- Adjust timeout (`-t 5`) based on network conditions
+- For large ranges, consider scanning during off-peak hours
+- Results are saved to `results/` directory (gitignored)
 
 ## License
 

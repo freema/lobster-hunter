@@ -1,10 +1,17 @@
 {
   "name": "lobster-hunter",
   "version": "1.0.0",
-  "description": "Network scanner for insecure ClawdBot installations",
+  "description": "Security scanner to identify ClawdBot Gateway instances lacking authentication (https://clawd.bot)",
   "bin": {
     "lobster-hunter": "./dist/index.js"
   },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
@@ -15,12 +22,29 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
-    "test": "npm run typecheck && npm run lint && npm run format:check"
+    "test": "npm run typecheck && npm run lint && npm run format:check",
+    "prepublishOnly": "npm run test && npm run build"
   },
-  "keywords": ["security", "scanner", "clawdbot", "network"],
-  "author": "",
+  "keywords": [
+    "security",
+    "scanner",
+    "clawdbot",
+    "network",
+    "websocket",
+    "pentest",
+    "security-tools"
+  ],
+  "author": "freema",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/freema/lobster-hunter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freema/lobster-hunter/issues"
+  },
+  "homepage": "https://github.com/freema/lobster-hunter#readme",
   "engines": {
     "node": ">=20.0.0"
   },

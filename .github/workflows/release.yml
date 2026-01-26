@@ -17,15 +17,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Run tests
+        run: npm test
+
       - name: Build
         run: npm run build
 
-      - name: Create Release
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -33,3 +42,27 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Pushover Notification - Success
+        if: success()
+        run: |
+          curl -s \
+            --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
+            --form-string "user=${{ secrets.PUSHOVER_USER }}" \
+            --form-string "title=✅ lobster-hunter Released" \
+            --form-string "message=Version ${{ github.ref_name }} successfully published to NPM and GitHub" \
+            --form-string "priority=0" \
+            --form-string "sound=pushover" \
+            https://api.pushover.net/1/messages.json
+
+      - name: Send Pushover Notification - Failure
+        if: failure()
+        run: |
+          curl -s \
+            --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
+            --form-string "user=${{ secrets.PUSHOVER_USER }}" \
+            --form-string "title=❌ lobster-hunter Release Failed" \
+            --form-string "message=Version ${{ github.ref_name }} failed to publish. Check GitHub Actions." \
+            --form-string "priority=1" \
+            --form-string "sound=siren" \
+            https://api.pushover.net/1/messages.json
