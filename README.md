@@ -1,5 +1,8 @@
 # lobster-hunter 🦞
 
+> [!WARNING]
+> **Archived — no longer maintained.** This repository is read-only and the npm package `lobster-hunter` will not receive further updates, including security fixes for its dependencies.
+
 A TypeScript CLI tool for scanning network ranges to detect insecure [ClawdBot](https://clawd.bot) Gateway installations that lack proper authentication.
 
 ## Purpose
